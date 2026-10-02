@@ -329,7 +329,332 @@ MCPBRNN_lib_tools/MCP_Zoo.py
 
 ---
 
-## 8. Checkpoint convention
+## 8. Running the models
+
+All model scripts can be executed from the repository root.
+
+The scripts use `argparse` for optional runtime settings. Fixed-structure models can be run directly, whereas model families with multiple functional dimensions require the corresponding dimension argument to select the intended model case.
+
+The included checkpoint is used by default unless `--checkpoint` is explicitly provided.
+
+### 8.1 Base single-node MCP models
+
+The five base models have fixed structures and can be run directly.
+
+#### M1
+
+Training:
+
+```bash
+python M1/mcpbrnn_Main_constantO_constantL_clean.py
+```
+
+Evaluation:
+
+```bash
+python M1/mcpbrnn_Main_constantO_constantL_EVAL_clean.py
+```
+
+#### M2
+
+Training:
+
+```bash
+python M2/mcpbrnn_Main_constantO_variableL_clean.py
+```
+
+Evaluation:
+
+```bash
+python M2/mcpbrnn_Main_constantO_variantL_EVAL_clean.py
+```
+
+#### M3
+
+Training:
+
+```bash
+python M3/mcpbrnn_Main_variableO_constantL_clean.py
+```
+
+Evaluation:
+
+```bash
+python M3/mcpbrnn_Main_variantO_constantL_EVAL_clean.py
+```
+
+#### M4
+
+Training:
+
+```bash
+python M4/mcpbrnn_Main_M4_Scaling_clean.py
+```
+
+Evaluation:
+
+```bash
+python M4/mcpbrnn_Main_M4_Scaling_EVAL_clean.py
+```
+
+#### M5
+
+Training:
+
+```bash
+python M5/mcpbrnn_Main_PETconstraint_clean.py
+```
+
+Evaluation:
+
+```bash
+python M5/evaluate_Main_PETconstraint_clean.py
+```
+
+### 8.2 Precipitation bias-correction models
+
+The precipitation bias-correction families share one training script and one evaluation script across dimensions 1–5.
+
+The desired bias-correction dimension is specified using:
+
+```text
+--dim x
+```
+
+where `x = 1,...,5`.
+
+#### Piecewise-linear correction: `M-IBCorrPL`
+
+For example, to run dimension 3:
+
+```bash
+python M-IBCorrPL/mcpbrnn_Main_PETconstraint_IBcorrPL_clean.py --dim 3
+```
+
+Evaluation:
+
+```bash
+python M-IBCorrPL/mcpbrnn_Main_PETconstraint_IBcorrPL_EVAL_clean.py --dim 3
+```
+
+The script automatically associates `--dim 3` with:
+
+```text
+M-IBCorrPL/M3-IBCorrPL/
+```
+
+#### Piecewise-quadratic correction: `M-IBCorrPQ`
+
+For example, to run dimension 3:
+
+```bash
+python M-IBCorrPQ/mcpbrnn_Main_PETconstraint_IBcorrPQ_clean.py --dim 3
+```
+
+Evaluation:
+
+```bash
+python M-IBCorrPQ/mcpbrnn_Main_PETconstraint_IBcorrPQ_EVAL_clean.py --dim 3
+```
+
+The script automatically associates `--dim 3` with:
+
+```text
+M-IBCorrPQ/M3-IBCorrPQ/
+```
+
+### 8.3 Mass-relaxation models
+
+The four mass-relaxation cases have fixed structures and can be run directly.
+
+#### MR-1
+
+```bash
+python MR-1/mcpbrnn_Main_MR1_Regular_clean.py
+python MR-1/mcpbrnn_Main_MR1_Regular_EVAL_clean.py
+```
+
+#### MR-2
+
+```bash
+python MR-2/mcpbrnn_Main_MR2_Independent_clean.py
+python MR-2/mcpbrnn_Main_MR2_Independent_EVAL_clean.py
+```
+
+#### MR-3
+
+```bash
+python MR-3/mcpbrnn_Main_MR3_Regular_Relaxed_clean.py
+python MR-3/mcpbrnn_Main_MR3_Regular_Relaxed_EVAL_clean.py
+```
+
+#### MR-4
+
+```bash
+python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_clean.py
+python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_EVAL_clean.py
+```
+
+### 8.4 High-dimensional ANN gate models: `M-ComplexGate`
+
+#### LossGateOnly
+
+Specify the loss-gate ANN dimension using `--dim`.
+
+For example:
+
+```bash
+python M-ComplexGate/LossGateOnly/mcpbrnn_Main_lossANNGate_clean.py --dim 3
+python M-ComplexGate/LossGateOnly/mcpbrnn_Main_PETconstraint_lossANNGate_EVAL_clean.py --dim 3
+```
+
+This selects:
+
+```text
+M-ComplexGate/LossGateOnly/loss-dim-3/
+```
+
+#### OutputGateOnly
+
+Specify the output-gate ANN dimension using `--dim`.
+
+For example:
+
+```bash
+python M-ComplexGate/OutputGateOnly/mcpbrnn_Main_outputANNGate_clean.py --dim 3
+python M-ComplexGate/OutputGateOnly/mcpbrnn_Main_PETconstraint_outputANNGate_EVAL_clean.py --dim 3
+```
+
+This selects:
+
+```text
+M-ComplexGate/OutputGateOnly/out-dim-3/
+```
+
+#### BothLossOutputGate
+
+The loss- and output-gate ANN dimensions are specified independently using:
+
+```text
+--loss_dim y --out_dim x
+```
+
+For example, for a loss-gate dimension of 3 and an output-gate dimension of 5:
+
+```bash
+python M-ComplexGate/BothLossOutputGate/mcpbrnn_Main_ANNGate_clean.py --loss_dim 3 --out_dim 5
+```
+
+Evaluation:
+
+```bash
+python M-ComplexGate/BothLossOutputGate/mcpbrnn_Main_ANNGate_PETconstraint_EVAL_clean.py --loss_dim 3 --out_dim 5
+```
+
+This selects:
+
+```text
+M-ComplexGate/BothLossOutputGate/loss-dim-3-out-dim-5/
+```
+
+### 8.5 Multi-information ANN models: `M-MI-ComplexGate`
+
+#### LossGateOnly
+
+Specify the loss-gate ANN dimension using `--dim`.
+
+```bash
+python M-MI-ComplexGate/LossGateOnly/mcpbrnn_Main_MI_Loss_PETconstraint_clean.py --dim 3
+python M-MI-ComplexGate/LossGateOnly/mcpbrnn_Main_MI_Loss_PETconstraint_EVAL_clean.py --dim 3
+```
+
+#### OutputGateOnly
+
+Specify the output-gate ANN dimension using `--dim`.
+
+```bash
+python M-MI-ComplexGate/OutputGateOnly/mcpbrnn_Main_MI_Output_PETconstraint_clean.py --dim 3
+python M-MI-ComplexGate/OutputGateOnly/mcpbrnn_Main_MI_Output_PETconstraint_EVAL_clean.py --dim 3
+```
+
+#### BothLossOutputGate
+
+Specify both ANN dimensions using `--loss_dim` and `--out_dim`.
+
+For example:
+
+```bash
+python M-MI-ComplexGate/BothLossOutputGate/mcpbrnn_Main_MI_LossOutput_PETconstraint_clean.py --loss_dim 3 --out_dim 5
+```
+
+Evaluation:
+
+```bash
+python M-MI-ComplexGate/BothLossOutputGate/mcpbrnn_Main_MI_LossOutput_PETconstraint_EVAL_clean.py --loss_dim 3 --out_dim 5
+```
+
+### 8.6 MI-only sigmoid models
+
+The MI-only sigmoid models have fixed structures and can be run directly.
+
+#### Loss gate only
+
+```bash
+python M-MI-ComplexGate/MI-Only/loss-gate-only/mcpbrnn_Main_MI_Loss_PETconstraint_Sigmoid_clean.py
+python M-MI-ComplexGate/MI-Only/loss-gate-only/mcpbrnn_Main_MI_Loss_PETconstraint_Sigmoid_EVAL_clean.py
+```
+
+#### Output gate only
+
+```bash
+python M-MI-ComplexGate/MI-Only/output-gate-only/mcpbrnn_Main_MI_Output_PETconstraint_Sigmoid_clean.py
+python M-MI-ComplexGate/MI-Only/output-gate-only/mcpbrnn_Main_MI_Output_PETconstraint_Sigmoid_EVAL_clean.py
+```
+
+#### Loss and output gates
+
+```bash
+python M-MI-ComplexGate/MI-Only/loss-output-gate/mcpbrnn_Main_MI_LossOutput_PETconstraint_Sigmoid_clean.py
+python M-MI-ComplexGate/MI-Only/loss-output-gate/mcpbrnn_Main_MI_LossOutput_PETconstraint_Sigmoid_EVAL_clean.py
+```
+
+### 8.7 Common command-line arguments
+
+Training scripts support optional arguments such as:
+
+```text
+--case_no
+--epoch_no
+--time_lag
+--seed_no
+--checkpoint
+--data_dir
+--output_dir
+--device
+```
+
+Dimension-dependent model families additionally use:
+
+```text
+--dim
+```
+
+or:
+
+```text
+--loss_dim
+--out_dim
+```
+
+The available arguments and defaults for any script can be inspected using:
+
+```bash
+python <script>.py --help
+```
+
+---
+
+## 9. Checkpoint convention
 
 For cleaned scripts, the preferred convention is:
 
@@ -372,7 +697,7 @@ metrics + diagnostic time series
 
 ---
 
-## 9. Common training settings
+## 10. Common training settings
 
 Unless a case explicitly differs:
 
@@ -407,7 +732,7 @@ Training diagnostics also include KGE at lags 1, 2, and 3.
 
 ---
 
-## 10. Time-series output convention
+## 11. Time-series output convention
 
 Cleaned output files use:
 
@@ -434,7 +759,7 @@ Repeated calendar dates across spinup phases are intentional; `phase` distinguis
 
 ---
 
-## 11. Implementation conventions
+## 12. Implementation conventions
 
 Cleaned model classes follow these rules:
 
@@ -452,7 +777,7 @@ For MR3 and MR4, only the Python class names were disambiguated; the checkpoint 
 
 ---
 
-## 12. Environment and dependencies
+## 13. Environment and dependencies
 
 The repository was organized for the following Python environment.
 
