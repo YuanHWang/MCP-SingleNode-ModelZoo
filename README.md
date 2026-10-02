@@ -23,6 +23,8 @@ The model notation used throughout the repository is:
 | MR | Mass-relaxation mechanism |
 ---
 
+For complete mathematical definitions, model formulations, and detailed descriptions of the MCP gating mechanisms, readers are referred to Wang & Gupta (2024).
+
 ## 2. Base single-node MCP models
 
 The basic family contains constant (`κ`) and sigmoid-variable (`σ`) output/loss gates. For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
