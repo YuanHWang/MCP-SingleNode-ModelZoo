@@ -1,6 +1,8 @@
 # MCP SingleNode Model Zoo
 
-This repository contains single-node **Mass-Conserving Perceptron (MCP)** model variants based on Wang & Gupta (2024), together with checkpoints used for training continuation, fine-tuning, and evaluation.
+This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
+
+It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
 > Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
 
@@ -209,7 +211,6 @@ MCPBRNN_Generic_ANNGate_PETconstraint_Generic
 The output and loss gates each use a one-hidden-layer ANN.
 
 ---
-
 ## 6. Multi-information ANN models: `M-MI-ComplexGate`
 
 MI means that a gate uses additional information beyond its standard current-time input.
@@ -271,7 +272,6 @@ These cases use direct sigmoid gates instead of ANN hidden layers.
 | `loss-output-gate/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
 
 ---
-
 ## 7. Recommended repository structure
 
 ```text
@@ -345,7 +345,6 @@ MCPBRNN_lib_tools/MCP_Zoo.py
 ```
 
 ---
-
 ## 8. Running the models
 
 All model scripts can be executed from the repository root.
@@ -668,9 +667,7 @@ The available arguments and defaults for any script can be inspected using:
 ```bash
 python <script>.py --help
 ```
-
 ---
-
 ## 9. Checkpoint convention
 
 For cleaned scripts, the preferred convention is:
@@ -840,4 +837,11 @@ Create and activate the Conda environment with:
 conda env create -f environment.yml
 conda activate MCP-SingleNode-ModelZoo
 ```
+---
+## 14. Conclusion
 
+This repository provides a consolidated collection of single-node MCP model variants, together with the corresponding training, evaluation, checkpoint, and data conventions used in the cleaned implementation.
+
+The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above.
+
+For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** Ph.D. at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
