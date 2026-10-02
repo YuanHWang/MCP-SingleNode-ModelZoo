@@ -2,7 +2,18 @@
 
 This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
 
+
+This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
+
 It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
+
+Readers are encouraged to consult the original paper for the formal model names, notation, and mathematical definitions associated with each MCP variant.
+
+- Full article: [Wang & Gupta (2024)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023WR036461)
+- DOI: [10.1029/2023WR036461](https://doi.org/10.1029/2023WR036461)
+
+> Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
+
 
 ## Conceptual overview of a single-node MCP
 
@@ -14,7 +25,6 @@ The figure below illustrates the functional components and modeling utilities th
 
 *Conceptual illustration of the functional components and modeling utilities represented in a single-node MCP.*
 
-> Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
 
 ## 1. Notation
 
@@ -117,27 +127,28 @@ M-IBCorrPQ/
 └── M5-IBCorrPQ/
 ```
 ---
-
 ## 4. Mass-relaxation models
 
 These models extend M5 by incorporating a mass-relaxation (MR) mechanism.
 
-Four MR variants are included:
+The four MR variants are:
 
-- **MR1:** Regular
-- **MR2:** Independent
-- **MR3:** Regular-Relaxed
-- **MR4:** Independent-Relaxed
+| Model | Notation | Description |
+|---|---|---|
+| MR-1 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{\sigma}^{R}\rbrace$ | Regular |
+| MR-2 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{I}^{R}\rbrace$ | Independent |
+| MR-3 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{\sigma r}^{R}\rbrace$ | Regular-Relaxed |
+| MR-4 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{Ir}^{R}\rbrace$ | Independent-Relaxed |
 
 Folders:
 
 ```text
-M-MassRelaxation/
-├── MR1/
-├── MR2/
-├── MR3/
-└── MR4/
+MR-1/
+MR-2/
+MR-3/
+MR-4/
 ```
+
 ---
 
 ## 5. High-dimensional ANN gate models: `M-ComplexGate`
@@ -852,6 +863,4 @@ conda activate MCP-SingleNode-ModelZoo
 
 This repository provides a consolidated collection of single-node MCP model variants, together with the corresponding training, evaluation, checkpoint, and data conventions used in the cleaned implementation.
 
-The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above.
-
-For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** Ph.D. at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
+The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above. For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang Ph.D.** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
