@@ -668,9 +668,7 @@ The available arguments and defaults for any script can be inspected using:
 ```bash
 python <script>.py --help
 ```
-
 ---
-
 ## 9. Checkpoint convention
 
 For cleaned scripts, the preferred convention is:
@@ -840,4 +838,11 @@ Create and activate the Conda environment with:
 conda env create -f environment.yml
 conda activate MCP-SingleNode-ModelZoo
 ```
+---
+## 14. Conclusion
 
+This repository provides a consolidated collection of single-node MCP model variants, together with the corresponding training, evaluation, checkpoint, and data conventions used in the cleaned implementation.
+
+The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above.
+
+For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
