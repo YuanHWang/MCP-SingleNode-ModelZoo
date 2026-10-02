@@ -845,4 +845,4 @@ This repository provides a consolidated collection of single-node MCP model vari
 
 The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above.
 
-For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
+For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** Ph.D. at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
