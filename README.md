@@ -1,6 +1,8 @@
 # MCP SingleNode Model Zoo
 
-This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
+This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). 
+
+The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
 
 It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
@@ -14,7 +16,13 @@ Readers are encouraged to consult the original paper for the formal model names,
 
 ## Conceptual overview of a single-node MCP
 
-The figure below illustrates the functional components and modeling utilities that can be represented within a single-node MCP, including input bias correction, input bypass, gate functional complexity, output-gate context dependence, unobserved mass exchange with the environment, and mass conservation.
+The figure below illustrates the functional components and modeling utilities that can be represented within a single-node MCP, including: 
+- input bias correction
+- input bypass
+- gate functional complexity
+- output-gate context dependence 
+- unobserved mass exchange with the environment
+- mass conservation.
 
 <p align="center">
   <img src="ConceptualFigure.png" width="900">
@@ -44,11 +52,11 @@ The model notation used throughout the repository is:
 
 ---
 
-For complete mathematical definitions, model formulations, and detailed descriptions of the MCP gating mechanisms, readers are referred to Wang & Gupta (2024).
-
 ## 2. Base single-node MCP models
 
-The basic family contains constant ($\kappa$) and sigmoid-variable ($\sigma$) output/loss gates. For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
+The basic family contains constant ($\kappa$) and sigmoid-variable ($\sigma$) output/loss gates. 
+
+For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
 
 | Model | Notation | Description | MCP_Zoo class |
 |---|---|---|---|
@@ -863,10 +871,11 @@ Create and activate the Conda environment with:
 conda env create -f environment.yml
 conda activate MCP-SingleNode-ModelZoo
 ```
+
 ---
 
 ## 14. Conclusion
 
-This repository provides a consolidated and reproducible collection of single-node MCP model variants, including cleaned training and evaluation scripts, checkpoints, and data conventions.
+This repository provides a consolidated and reproducible collection of single-node MCP model variants, including cleaned training and evaluation scripts, checkpoints, and data conventions. 
 
 For questions or suggestions, please contact **Yuan-Heng Wang, Ph.D.** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
