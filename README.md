@@ -130,13 +130,13 @@ M-MassRelaxation/
 
 ## 5. High-dimensional ANN gate models: `M-ComplexGate`
 
-`A_x` denotes a one-hidden-layer ANN with `x = 1,...,5` hidden nodes.
+$A_x$ denotes a one-hidden-layer ANN with $x=1,\ldots,5$ hidden nodes.
 
 ### 5.1 LossGateOnly
 
-```text
-MC{Oσ L_Ax con},  x = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{\sigma}L_{A_x}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Folder structure:
 
@@ -160,9 +160,9 @@ The output gate is storage-dependent sigmoid. The loss gate is a PET-driven ANN.
 
 ### 5.2 OutputGateOnly
 
-```text
-MC{O_Ax Lσ con},  x = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{A_x}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Folder structure:
 
@@ -186,9 +186,9 @@ The output gate is a storage-driven ANN. The loss gate remains PET-dependent sig
 
 ### 5.3 BothLossOutputGate
 
-```text
-MC{O_Ax L_Ay con},  x,y = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{A_x}L_{A_y}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
 
 There are 25 combinations:
 
@@ -197,6 +197,8 @@ loss-dim-1-out-dim-1
 ...
 loss-dim-5-out-dim-5
 ```
+
+Here, $x$ and $y$ denote the dimensions of the output-gate and loss-gate ANN functions, respectively.
 
 Class:
 
@@ -210,19 +212,19 @@ The output and loss gates each use a one-hidden-layer ANN.
 
 ## 6. Multi-information ANN models: `M-MI-ComplexGate`
 
-`MI` means that a gate uses additional information beyond its standard current-time input.
+MI means that a gate uses additional information beyond its standard current-time input.
 
 For the current implementation:
 
-- the **output gate** can use current storage plus lagged storage (`t-1`);
+- the **output gate** can use current storage plus lagged storage ($t-1$);
 - the **loss gate** can additionally use current storage information;
-- `+` in the notation denotes the MI extension.
+- $+$ in the notation denotes the MI extension.
 
 ### 6.1 LossGateOnly
 
-```text
-MC{Oσ L_Ax+ con},  x = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{\sigma}L_{A_x+}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Class:
 
@@ -232,9 +234,9 @@ MCPBRNN_Generic_PETconstraint_MIloss
 
 ### 6.2 OutputGateOnly
 
-```text
-MC{O_Ax+ Lσ con},  x = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{A_x+}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Class:
 
@@ -244,11 +246,13 @@ MCPBRNN_Generic_PETconstraint_MIoutput
 
 ### 6.3 BothLossOutputGate
 
-```text
-MC{O_Ax+ L_Ay+ con},  x,y = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{A_x+}L_{A_y+}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
 
 There are 25 combinations.
+
+Here, $x$ and $y$ denote the dimensions of the output-gate and loss-gate ANN functions, respectively.
 
 Class:
 
@@ -262,9 +266,9 @@ These cases use direct sigmoid gates instead of ANN hidden layers.
 
 | Folder | Notation | Class |
 |---|---|---|
-| `loss-gate-only/` | `MC{Oσ Lσ+ con}` | `MCPBRNN_Generic_PETconstraint_MIloss_Sigmoid` |
-| `output-gate-only/` | `MC{Oσ+ Lσ con}` | `MCPBRNN_Generic_PETconstraint_MIoutput_Sigmoid` |
-| `loss-output-gate/` | `MC{Oσ+ Lσ+ con}` | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
+| `loss-gate-only/` | $MC\lbrace O_{\sigma}L_{\sigma+}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIloss_Sigmoid` |
+| `output-gate-only/` | $MC\lbrace O_{\sigma+}L_{\sigma}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutput_Sigmoid` |
+| `loss-output-gate/` | $MC\lbrace O_{\sigma+}L_{\sigma+}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
 
 ---
 
