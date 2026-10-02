@@ -159,7 +159,7 @@ MR-4/
 
 ---
 
-## 5. High-dimensional ANN gate models: `M-ComplexGate`
+## 5. Complex gate models: `M-ComplexGate`
 
 $A_x$ denotes a one-hidden-layer ANN with $x=1,\ldots,5$ hidden nodes.
 
@@ -241,7 +241,7 @@ The output and loss gates each use a one-hidden-layer ANN.
 
 ---
 
-## 6. Multi-information ANN models: `M-MI-ComplexGate`
+## 6. Multi-information complex gate models: `M-MI-ComplexGate`
 
 MI means that a gate uses additional information beyond its standard current-time input.
 
