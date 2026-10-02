@@ -103,169 +103,28 @@ M-IBCorrPQ/
 ├── M3-IBCorrPQ/
 ├── M4-IBCorrPQ/
 └── M5-IBCorrPQ/
-
+```
 ---
 
 ## 4. Mass-relaxation models
 
-The four mass-relaxation cases all retain the M5 hydrologic core and add a signed mass-relaxation correction to the storage update.
+These models extend M5 by incorporating a mass-relaxation (MR) mechanism.
 
-The generic state update is
+Four MR variants are included:
 
-```text
-S[t+1] = gR[t] S[t] + P[t] - MR_flux[t]
-```
+- **MR1:** Regular
+- **MR2:** Independent
+- **MR3:** Regular-Relaxed
+- **MR4:** Independent-Relaxed
 
-with
-
-```text
-gR = 1 - gO - gLc
-```
-
-### 4.1 MR1 — Regular
-
-Notation:
+Folders:
 
 ```text
-MC{Oσ Lσ con Mσ R}
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_MassRelax_Regular
-```
-
-MR formulation:
-
-```python
-mr_state = (storage / 500 - exp(bias_b0_yrm)) * exp(weight_s_yvm)
-mr_raw = sigmoid(weight_r_yvm) * tanh(mr_state)
-mr_gate = min(mr_raw, remember_gate)
-mr_flux = mr_gate * abs(storage - exp(bias_b0_yrm) * 500)
-```
-
-EVAL scaling:
-
-```python
-C_MEAN = 543.3166693
-C_STD  = 79.61569861
-```
-
-Historical checkpoint: `model_epoch19.pt`
-
-### 4.2 MR2 — Independent
-
-Notation:
-
-```text
-MC{Oσ Lσ con MI R}
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_MassRelax_Indepedent
-```
-
-> The historical spelling `Indepedent` is intentionally retained for compatibility.
-
-MR formulation:
-
-```python
-mr_sign = sign(storage / 500 - exp(bias_b0_yrm))
-mr_raw = sigmoid(weight_r_yvm) * mr_sign
-mr_gate = min(mr_raw, remember_gate)
-mr_flux = mr_gate * abs(storage - exp(bias_b0_yrm) * 500)
-```
-
-EVAL scaling:
-
-```python
-C_MEAN = 537.1148789
-C_STD  = 82.04150564
-```
-
-Historical checkpoint: `model_epoch23.pt`
-
-### 4.3 MR3 — Regular Relaxed
-
-Notation:
-
-```text
-MC{Oσ Lσ con Mσr R}
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_MassRelax_Regular_Relaxed
-```
-
-This class is renamed from the historical duplicate `MCPBRNN_PETconstraint_MassRelax_Regular` so it can coexist with MR1 in `MCP_Zoo.py`.
-
-MR formulation:
-
-```python
-mr_state = (storage / 500 - bias_b0_yrm) * exp(weight_s_yvm)
-mr_raw = sigmoid(weight_r_yvm) * tanh(mr_state)
-mr_gate = min(mr_raw, remember_gate)
-mr_flux = mr_gate * abs(storage - bias_b0_yrm * 500)
-```
-
-EVAL scaling:
-
-```python
-C_MEAN = 475.0253683
-C_STD  = 89.86101728
-```
-
-Historical checkpoint: `model_epoch3.pt`
-
-### 4.4 MR4 — Independent Relaxed
-
-Notation:
-
-```text
-MC{Oσ Lσ con MIr R}
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_MassRelax_Independent_Relaxed
-```
-
-This class is renamed from the historical duplicate `MCPBRNN_PETconstraint_MassRelax_Indepedent` so it can coexist with MR2.
-
-MR formulation:
-
-```python
-mr_sign = sign(storage / 500 - bias_b0_yrm)
-mr_raw = sigmoid(weight_r_yvm) * mr_sign
-mr_gate = min(mr_raw, remember_gate)
-mr_flux = mr_gate * abs(storage - bias_b0_yrm * 500)
-```
-
-EVAL scaling:
-
-```python
-C_MEAN = 557.1992146
-C_STD  = 85.30399231
-```
-
-Historical checkpoint: `model_epoch19.pt`
-
-### MR summary
-
-| Case | Response | Equilibrium parameterization | Parameters | EVAL scaling mean/std |
-|---|---|---|---:|---|
-| MR1 | Continuous `tanh` | `exp(bias_b0_yrm)` | 10 | `543.3166693 / 79.61569861` |
-| MR2 | Sign-based | `exp(bias_b0_yrm)` | 9 | `537.1148789 / 82.04150564` |
-| MR3 | Continuous `tanh` | direct `bias_b0_yrm` | 10 | `475.0253683 / 89.86101728` |
-| MR4 | Sign-based | direct `bias_b0_yrm` | 9 | `557.1992146 / 85.30399231` |
-
-**Important:** for MR1–MR4, the cleaned training and EVAL scripts use the **scaling mean/std from the corresponding historical EVAL script**.
+M-MassRelaxation/
+├── MR1/
+├── MR2/
+├── MR3/
+└── MR4/
 
 ---
 
