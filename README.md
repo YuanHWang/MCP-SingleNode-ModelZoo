@@ -71,6 +71,22 @@ Accordingly:
 - `M4-IBCorrPL` corresponds to $B_{L4}$
 - `M5-IBCorrPL` corresponds to $B_{L5}$
 
+### 3.2 Piecewise-quadratic correction: `M-IBCorrPQ`
+
+The model family is denoted as
+
+$MC\lbrace O_{\sigma}L_{\sigma}^{con}B_{Qx}\rbrace,\quad x=1,\ldots,5$
+
+where $B_{Qx}$ represents a piecewise-quadratic precipitation bias-correction function with dimension $x$.
+
+Accordingly:
+
+- `M1-IBCorrPQ` corresponds to $B_{Q1}$
+- `M2-IBCorrPQ` corresponds to $B_{Q2}$
+- `M3-IBCorrPQ` corresponds to $B_{Q3}$
+- `M4-IBCorrPQ` corresponds to $B_{Q4}$
+- `M5-IBCorrPQ` corresponds to $B_{Q5}$
+
 Folders:
 
 ```text
