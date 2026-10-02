@@ -317,6 +317,10 @@ project/
         └── loss-output-gate/
 ```
 
+### Leaf River data
+
+The folder [`20220527-MDUPLEX-LeafRiver`](https://github.com/YuanHWang/MCP-SingleNode-ModelZoo/tree/main/20220527-MDUPLEX-LeafRiver) contains the hydrometeorological data for the **Leaf River catchment in Mississippi, USA**, which is used as the experimental catchment for the single-node MCP models in this repository.
+
 All model classes should be consolidated in:
 
 ```text
