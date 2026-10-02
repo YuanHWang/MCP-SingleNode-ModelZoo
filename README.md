@@ -51,13 +51,25 @@ Historical checkpoint references:
 
 ## 3. Precipitation bias-correction models
 
-These models extend M5 with a precipitation-dependent bias-correction gate.
+These models extend M5 with a precipitation-dependent bias-correction function.
+
+For both model families below, **M1–M5 indicate the dimensionality of the bias-correction function**, ranging from 1 to 5. These labels do **not** refer to the five base MCP models described in Section 2.
 
 ### 3.1 Piecewise-linear correction: `M-IBCorrPL`
 
-```text
-MC{Oσ Lσ con B_Lx},  x = 1,...,5
-```
+The model family is denoted as
+
+$MC\lbrace O_{\sigma}L_{\sigma}^{con}B_{Lx}\rbrace,\quad x=1,\ldots,5$
+
+where $B_{Lx}$ denotes a piecewise-linear precipitation bias-correction function with dimension $x$.
+
+Thus:
+
+- `M1-IBCorrPL` corresponds to $B_{L1}$
+- `M2-IBCorrPL` corresponds to $B_{L2}$
+- `M3-IBCorrPL` corresponds to $B_{L3}$
+- `M4-IBCorrPL` corresponds to $B_{L4}$
+- `M5-IBCorrPL` corresponds to $B_{L5}$
 
 Folders:
 
@@ -68,40 +80,6 @@ M-IBCorrPL/
 ├── M3-IBCorrPL/
 ├── M4-IBCorrPL/
 └── M5-IBCorrPL/
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_IBcorrPL_Generic
-```
-
-`x` is the number of piecewise-linear correction nodes.
-
-### 3.2 Piecewise-quadratic correction: `M-IBCorrPQ`
-
-```text
-MC{Oσ Lσ con B_Qx},  x = 1,...,5
-```
-
-Folders:
-
-```text
-M-IBCorrPQ/
-├── M1-IBCorrPQ/
-├── M2-IBCorrPQ/
-├── M3-IBCorrPQ/
-├── M4-IBCorrPQ/
-└── M5-IBCorrPQ/
-```
-
-Class:
-
-```python
-MCPBRNN_PETconstraint_IBcorrPQ_Generic
-```
-
-`x` is the number of piecewise-quadratic correction nodes.
 
 ---
 
