@@ -27,15 +27,15 @@ For complete mathematical definitions, model formulations, and detailed descript
 
 ## 2. Base single-node MCP models
 
-The basic family contains constant (`κ`) and sigmoid-variable (`σ`) output/loss gates. For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
+The basic family contains constant ($\kappa$) and sigmoid-variable ($\sigma$) output/loss gates. For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
 
 | Model | Notation | Description | MCP_Zoo class |
 |---|---|---|---|
-| M1 | `MC{Oκ Lκ}` | Constant output + constant loss | `MCPBRNN_constant_OutLoss` |
-| M2 | `MC{Oκ Lσ}` | Constant output + PET-variable loss | `MCPBRNN_Generic_constant_Out_variableLoss` |
-| M3 | `MC{Oσ Lκ}` | Storage-variable output + constant loss | `MCPBRNN_Generic_variable_Out_constantLoss` |
-| M4 | `MC{Oσ Lσ}` | Storage-variable output + PET-variable loss | `MCPBRNN_Generic_Scaling` |
-| M5 | `MC{Oσ Lσ con}` | M4 + PET-constrained loss | `MCPBRNN_Generic_PETconstraint_Scaling` |
+| M1 | $\mathrm{MC}\{O_{\kappa}L_{\kappa}\}$ | Constant output + constant loss | `MCPBRNN_constant_OutLoss` |
+| M2 | $\mathrm{MC}\{O_{\kappa}L_{\sigma}\}$ | Constant output + PET-variable loss | `MCPBRNN_Generic_constant_Out_variableLoss` |
+| M3 | $\mathrm{MC}\{O_{\sigma}L_{\kappa}\}$ | Storage-variable output + constant loss | `MCPBRNN_Generic_variable_Out_constantLoss` |
+| M4 | $\mathrm{MC}\{O_{\sigma}L_{\sigma}\}$ | Storage-variable output + PET-variable loss | `MCPBRNN_Generic_Scaling` |
+| M5 | $\mathrm{MC}\{O_{\sigma}L_{\sigma}^{\mathrm{con}}\}$ | M4 + PET-constrained loss | `MCPBRNN_Generic_PETconstraint_Scaling` |
 
 Historical checkpoint references:
 
