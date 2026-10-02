@@ -4,6 +4,16 @@ This repository is a refactored and reorganized version of the research code ori
 
 It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
+## Conceptual overview of a single-node MCP
+
+The figure below illustrates the functional components and modeling utilities that can be represented within a single-node MCP, including input bias correction, input bypass, gate functional complexity, output-gate context dependence, unobserved mass exchange with the environment, and mass conservation.
+
+<p align="center">
+  <img src="ConceptualFigure.png" width="900">
+</p>
+
+*Conceptual illustration of the functional components and modeling utilities represented in a single-node MCP.*
+
 > Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
 
 ## 1. Notation
