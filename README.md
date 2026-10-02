@@ -10,26 +10,17 @@ The model notation used throughout the repository is:
 
 | Symbol | Meaning |
 |---|---|
-| `O` | Output gate |
-| `L` | Loss gate |
-| `R` | Remember gate |
-| `κ` | Constant gate |
-| `σ` | Sigmoid-based time-variable gate |
-| `con` | PET-constrained loss gate |
-| `B_Lx` | Piecewise-linear precipitation bias-correction gate with dimension `x` |
-| `B_Qx` | Piecewise-quadratic precipitation bias-correction gate with dimension `x` |
-| `A_x` | Single hidden ANN layer with `x` nodes |
-| `+` | Multi-information (MI): the gate uses additional state information |
-| `MR` | Mass-relaxation mechanism |
-
-For all cleaned implementations, **remember gate** is used consistently for
-
-```text
-gR = 1 - gO - gLc
-```
-
-where `gLc` is the PET-constrained loss gate.
-
+| $O$ | Output gate |
+| $L$ | Loss gate |
+| $R$ | Remember gate |
+| $\kappa$ | Constant gate |
+| $\sigma$ | Sigmoid-based time-variable gate |
+| $\mathrm{con}$ | PET-constrained loss gate |
+| $B_{Lx}$ | Piecewise-linear precipitation bias-correction gate with dimension $x$ |
+| $B_{Qx}$ | Piecewise-quadratic precipitation bias-correction gate with dimension $x$ |
+| $A_x$ | Single hidden ANN layer with $x$ nodes |
+| $+$ | Multi-information (MI): the gate uses additional state information |
+| MR | Mass-relaxation mechanism |
 ---
 
 ## 2. Base single-node MCP models
