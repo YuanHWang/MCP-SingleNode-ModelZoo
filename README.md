@@ -1,4 +1,4 @@
-# MCP SingleNode Model Zoo
+# Mass-Conserving Perceptron (MCP) SingleNode Model Zoo
 
 This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). 
 
