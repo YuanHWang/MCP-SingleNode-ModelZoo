@@ -218,13 +218,13 @@ For the current implementation:
 
 - the **output gate** can use current storage plus lagged storage ($t-1$);
 - the **loss gate** can additionally use current storage information;
-- the superscript $^{(+)}$ denotes the MI extension.
+- the superscript $^{+}$ denotes the MI extension.
 
 ### 6.1 LossGateOnly
 
 The model family is denoted as
 
-$MC\lbrace O_{\sigma}L_{A_x^{(+)}}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
+$MC\lbrace O_{\sigma}L_{A_x^{+}}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Class:
 
@@ -236,7 +236,7 @@ MCPBRNN_Generic_PETconstraint_MIloss
 
 The model family is denoted as
 
-$MC\lbrace O_{A_x^{(+)}}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
+$MC\lbrace O_{A_x^{+}}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
 
 Class:
 
@@ -248,7 +248,7 @@ MCPBRNN_Generic_PETconstraint_MIoutput
 
 The model family is denoted as
 
-$MC\lbrace O_{A_x^{(+)}}L_{A_y^{(+)}}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
+$MC\lbrace O_{A_x^{+}}L_{A_y^{+}}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
 
 There are 25 combinations.
 
@@ -266,9 +266,9 @@ These cases use direct sigmoid gates instead of ANN hidden layers.
 
 | Folder | Notation | Class |
 |---|---|---|
-| `loss-gate-only/` | $MC\lbrace O_{\sigma}L_{\sigma^{(+)}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIloss_Sigmoid` |
-| `output-gate-only/` | $MC\lbrace O_{\sigma^{(+)}}L_{\sigma}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutput_Sigmoid` |
-| `loss-output-gate/` | $MC\lbrace O_{\sigma^{(+)}}L_{\sigma^{(+)}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
+| `loss-gate-only/` | $MC\lbrace O_{\sigma}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIloss_Sigmoid` |
+| `output-gate-only/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutput_Sigmoid` |
+| `loss-output-gate/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
 
 ---
 
