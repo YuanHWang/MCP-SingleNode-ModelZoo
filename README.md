@@ -31,11 +31,11 @@ The basic family contains constant ($\kappa$) and sigmoid-variable ($\sigma$) ou
 
 | Model | Notation | Description | MCP_Zoo class |
 |---|---|---|---|
-| M1 | $\mathrm{MC}\left\{O_{\kappa}L_{\kappa}\right\}$ | Constant output + constant loss | `MCPBRNN_constant_OutLoss` |
-| M2 | $\mathrm{MC}\left\{O_{\kappa}L_{\sigma}\right\}$ | Constant output + PET-variable loss | `MCPBRNN_Generic_constant_Out_variableLoss` |
-| M3 | $\mathrm{MC}\left\{O_{\sigma}L_{\kappa}\right\}$ | Storage-variable output + constant loss | `MCPBRNN_Generic_variable_Out_constantLoss` |
-| M4 | $\mathrm{MC}\left\{O_{\sigma}L_{\sigma}\right\}$ | Storage-variable output + PET-variable loss | `MCPBRNN_Generic_Scaling` |
-| M5 | $\mathrm{MC}\left\{O_{\sigma}L_{\sigma}^{\mathrm{con}}\right\}$ | M4 + PET-constrained loss | `MCPBRNN_Generic_PETconstraint_Scaling` |
+| M1 | $\mathrm{MC}\lbrace O_{\kappa}L_{\kappa}\rbrace$ | Constant output + constant loss | `MCPBRNN_constant_OutLoss` |
+| M2 | $\mathrm{MC}\lbrace O_{\kappa}L_{\sigma}\rbrace$ | Constant output + PET-variable loss | `MCPBRNN_Generic_constant_Out_variableLoss` |
+| M3 | $\mathrm{MC}\lbrace O_{\sigma}L_{\kappa}\rbrace$ | Storage-variable output + constant loss | `MCPBRNN_Generic_variable_Out_constantLoss` |
+| M4 | $\mathrm{MC}\lbrace O_{\sigma}L_{\sigma}\rbrace$ | Storage-variable output + PET-variable loss | `MCPBRNN_Generic_Scaling` |
+| M5 | $\mathrm{MC}\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}\rbrace$ | M4 + PET-constrained loss | `MCPBRNN_Generic_PETconstraint_Scaling` |
 
 Historical checkpoint references:
 
