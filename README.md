@@ -2,9 +2,6 @@
 
 This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
 
-
-This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
-
 It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
 Readers are encouraged to consult the original paper for the formal model names, notation, and mathematical definitions associated with each MCP variant.
@@ -25,6 +22,7 @@ The figure below illustrates the functional components and modeling utilities th
 
 *Conceptual illustration of the functional components and modeling utilities represented in a single-node MCP.*
 
+---
 
 ## 1. Notation
 
@@ -43,6 +41,7 @@ The model notation used throughout the repository is:
 | $A_x$ | Single hidden ANN layer with $x$ nodes |
 | $+$ | Multi-information (MI): the gate uses additional state information |
 | MR | Mass-relaxation mechanism |
+
 ---
 
 For complete mathematical definitions, model formulations, and detailed descriptions of the MCP gating mechanisms, readers are referred to Wang & Gupta (2024).
@@ -126,7 +125,9 @@ M-IBCorrPQ/
 ├── M4-IBCorrPQ/
 └── M5-IBCorrPQ/
 ```
+
 ---
+
 ## 4. Mass-relaxation models
 
 These models extend M5 by incorporating a mass-relaxation (MR) mechanism.
@@ -232,6 +233,7 @@ MCPBRNN_Generic_ANNGate_PETconstraint_Generic
 The output and loss gates each use a one-hidden-layer ANN.
 
 ---
+
 ## 6. Multi-information ANN models: `M-MI-ComplexGate`
 
 MI means that a gate uses additional information beyond its standard current-time input.
@@ -293,6 +295,7 @@ These cases use direct sigmoid gates instead of ANN hidden layers.
 | `loss-output-gate/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
 
 ---
+
 ## 7. Recommended repository structure
 
 ```text
@@ -366,6 +369,7 @@ MCPBRNN_lib_tools/MCP_Zoo.py
 ```
 
 ---
+
 ## 8. Running the models
 
 All model scripts can be executed from the repository root.
@@ -689,6 +693,7 @@ The available arguments and defaults for any script can be inspected using:
 python <script>.py --help
 ```
 ---
+
 ## 9. Checkpoint convention
 
 For cleaned scripts, the preferred convention is:
@@ -859,8 +864,9 @@ conda env create -f environment.yml
 conda activate MCP-SingleNode-ModelZoo
 ```
 ---
+
 ## 14. Conclusion
 
-This repository provides a consolidated collection of single-node MCP model variants, together with the corresponding training, evaluation, checkpoint, and data conventions used in the cleaned implementation.
+This repository provides a consolidated and reproducible collection of single-node MCP model variants, including cleaned training and evaluation scripts, checkpoints, and data conventions.
 
-The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above. For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang Ph.D.** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
+For questions or suggestions, please contact **Yuan-Heng Wang, Ph.D.** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
