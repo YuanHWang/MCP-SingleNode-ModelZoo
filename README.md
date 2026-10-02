@@ -1,6 +1,6 @@
 # Mass-Conserving Perceptron (MCP) SingleNode Model Zoo
 
-This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). 
+This repository presents a cleaned, refactored, documented, and reorganized version of the research code originally released on [Zenodo](https://zenodo.org/records/10002551), with assistance from OpenAI's ChatGPT (GPT-5.6 Sol, High reasoning mode).
 
 The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
 
