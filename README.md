@@ -271,7 +271,6 @@ These cases use direct sigmoid gates instead of ANN hidden layers.
 | `loss-output-gate/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
 
 ---
-
 ## 7. Recommended repository structure
 
 ```text
@@ -844,4 +843,5 @@ conda activate MCP-SingleNode-ModelZoo
 This repository provides a consolidated collection of single-node MCP model variants, together with the corresponding training, evaluation, checkpoint, and data conventions used in the cleaned implementation.
 
 The repository is intended to support reproducible use, comparison, and further development of the MCP model families described above.
+
 For questions, issues, or suggestions regarding the repository, please contact **Yuan-Heng Wang** Ph.D. at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
