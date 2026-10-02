@@ -317,9 +317,26 @@ project/
         └── loss-output-gate/
 ```
 
-### Leaf River data
+### Leaf River data: `20220527-MDUPLEX-LeafRiver`
 
-The folder [`20220527-MDUPLEX-LeafRiver`](https://github.com/YuanHWang/MCP-SingleNode-ModelZoo/tree/main/20220527-MDUPLEX-LeafRiver) contains the hydrometeorological data for the **Leaf River catchment in Mississippi, USA**, which is used as the experimental catchment for the single-node MCP models in this repository.
+The [`20220527-MDUPLEX-LeafRiver`](https://github.com/YuanHWang/MCP-SingleNode-ModelZoo/tree/main/20220527-MDUPLEX-LeafRiver) folder contains the daily hydrometeorological data for the **Leaf River catchment in Mississippi, USA**.
+
+The current training and evaluation scripts use two files:
+
+- `LeafRiverDaily_43YR.txt` — 43-year daily data containing three columns: precipitation ($P$), potential evapotranspiration ($PET$), and streamflow ($Q$).
+- `LeafRiverDaily_43YR_Flag.txt` — data-partition flags used to identify spinup, training, selection, and testing periods.
+
+The partition flags are:
+
+| Flag | Period |
+|---:|---|
+| `-99999` | Spinup |
+| `-1` | Training |
+| `0` | Selection |
+| `1` | Testing |
+
+Other files in this directory are retained from earlier experiments and alternative data-partition schemes, but are not used by the current cleaned Model Zoo scripts.
+
 
 All model classes should be consolidated in:
 
