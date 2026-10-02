@@ -13,7 +13,6 @@ Readers are encouraged to consult the original paper for the formal model names,
 
 > Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
 
-
 ## Conceptual overview of a single-node MCP
 
 The figure below illustrates the functional components and modeling utilities that can be represented within a single-node MCP, including: 
