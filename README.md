@@ -1,6 +1,8 @@
 # MCP SingleNode Model Zoo
 
-This repository contains single-node **Mass-Conserving Perceptron (MCP)** model variants based on Wang & Gupta (2024), together with checkpoints used for training continuation, fine-tuning, and evaluation.
+This repository is a refactored and reorganized version of the research code originally released at [Zenodo](https://zenodo.org/records/10002551). The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
+
+It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
 > Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
 
@@ -209,7 +211,6 @@ MCPBRNN_Generic_ANNGate_PETconstraint_Generic
 The output and loss gates each use a one-hidden-layer ANN.
 
 ---
-
 ## 6. Multi-information ANN models: `M-MI-ComplexGate`
 
 MI means that a gate uses additional information beyond its standard current-time input.
@@ -344,7 +345,6 @@ MCPBRNN_lib_tools/MCP_Zoo.py
 ```
 
 ---
-
 ## 8. Running the models
 
 All model scripts can be executed from the repository root.
