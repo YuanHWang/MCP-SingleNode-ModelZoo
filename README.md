@@ -20,7 +20,7 @@ The model notation used throughout the repository is:
 | `B_Qx` | Piecewise-quadratic precipitation bias-correction gate with dimension `x` |
 | `A_x` | Single hidden ANN layer with `x` nodes |
 | `+` | Multi-information (MI): the gate uses additional state information |
-| `M` | Mass-relaxation mechanism |
+| `MR` | Mass-relaxation mechanism |
 
 For all cleaned implementations, **remember gate** is used consistently for
 
