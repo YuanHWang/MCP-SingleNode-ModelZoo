@@ -1,4 +1,4 @@
-# MCP Model Zoo
+# MCP SingleNode Model Zoo
 
 This repository contains single-node **Mass-Conserving Perceptron (MCP)** model variants based on Wang & Gupta (2024), together with checkpoints used for training continuation, fine-tuning, and evaluation.
 
