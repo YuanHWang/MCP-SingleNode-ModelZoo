@@ -543,7 +543,7 @@ python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_clean.py
 python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_EVAL_clean.py
 ```
 
-### 8.4 High-dimensional ANN gate models: `M-ComplexGate`
+### 8.4 High-dimensional complex gate models: `M-ComplexGate`
 
 #### LossGateOnly
 
@@ -605,7 +605,7 @@ This selects:
 M-ComplexGate/BothLossOutputGate/loss-dim-3-out-dim-5/
 ```
 
-### 8.5 Multi-information ANN models: `M-MI-ComplexGate`
+### 8.5 Multi-information complex gate models: `M-MI-ComplexGate`
 
 #### LossGateOnly
 
