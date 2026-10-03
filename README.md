@@ -293,7 +293,7 @@ MCPBRNN_Generic_PETconstraint_MIoutputloss
 
 ### 6.4 MI-Only sigmoid models
 
-These cases use direct sigmoid gates instead of ANN hidden layers.
+These cases use direct sigmoid gates instead of ANN layers.
 
 | Folder | Notation | Class |
 |---|---|---|
