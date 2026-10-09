@@ -6,7 +6,9 @@ The original code was developed for the experiments reported in Wang & Gupta (20
 
 It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
 
-Readers are encouraged to consult the original paper for the formal model names, notation, and mathematical definitions associated with each MCP variant.
+# References & Citation
+
+Readers are encouraged to consult the original paper for the formal model names, notation, and mathematical definitions associated with each MCP variant. If you use or build upon these models in your research, please cite Wang & Gupta (2024).
 
 - Full article: [Wang & Gupta (2024)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023WR036461)
 - DOI: [10.1029/2023WR036461](https://doi.org/10.1029/2023WR036461)
