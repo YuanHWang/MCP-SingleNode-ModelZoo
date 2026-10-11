@@ -1,885 +1,630 @@
-# Mass-Conserving Perceptron (MCP) SingleNode Model Zoo
+## Mass-Conserving Perceptron (MCP) Neural Network Model Zoo
 
-This repository presents a cleaned, refactored, documented, and reorganized version of the research code originally released on [Zenodo](https://zenodo.org/records/10002551), with assistance from OpenAI's ChatGPT (GPT-5.6 Sol, High reasoning mode).
+This repository provides a curated and documented implementation of the neural-network architectures developed in Wang & Gupta (2025), all built around the mass-conserving perceptron (MCP) as the fundamental computational unit, as illustrated in Figure 1.
 
-The original code was developed for the experiments reported in Wang & Gupta (2024), while this repository restructures those implementations into a more usable, reproducible, and maintainable model zoo.
+![MCP-based neural-network architecture](Figure1.png)
 
-It contains single-node **Mass-Conserving Perceptron (MCP)** model variants, together with cleaned training and evaluation scripts, historical checkpoints, standardized model notation, and documented execution conventions for model reproduction, continuation, fine-tuning, and further development.
+*Figure 1. A neural-network architecture built from mass-conserving perceptrons.*
 
-# References & Citation
+The original research code was archived at [Zenodo](https://doi.org/10.5281/zenodo.15811866); the version presented here has since been streamlined, refactored, and reorganized for improved readability, reproducibility, and reuse, with assistance from OpenAI's ChatGPT (GPT-6.1 Sol, Max intelligence mode).
 
-Readers are encouraged to consult the original paper for the formal model names, notation, and mathematical definitions associated with each MCP variant. If you use or build upon these models in your research, please cite Wang & Gupta (2024).
-
-- Full article: [Wang & Gupta (2024)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023WR036461)
-- DOI: [10.1029/2023WR036461](https://doi.org/10.1029/2023WR036461)
-
-> Wang, Y.-H. and Gupta, H.V. (2024). *A mass-conserving-perceptron for machine-learning-based modeling of geoscientific systems*. Water Resources Research, 60(4), e2023WR036461.
-
-## Conceptual overview of a single-node MCP
-
-The figure below illustrates the functional components and modeling utilities that can be represented within a single-node MCP, including: 
-- input bias correction
-- input bypass
-- gate functional complexity
-- output-gate context dependence 
-- unobserved mass exchange with the environment
-- mass conservation.
-
-<p align="center">
-  <img src="ConceptualFigure.png" width="900">
-</p>
-
-*Conceptual illustration of the functional components and modeling utilities represented in a single-node MCP.*
+Note that this repository includes only the results for the Leaf River Basin and is intended primarily for pedagogical and demonstration purposes. Users interested in reproducing or extending the analyses to the CAMELS-US catchments are encouraged to follow the methodology described in Wang & Gupta (2025) and use the scripts provided in the original [Zenodo](https://doi.org/10.5281/zenodo.15811866).
 
 ---
 
-## 1. Notation
+## Quick Start
 
-The model notation used throughout the repository is:
+### Requirements
 
-| Symbol | Meaning |
-|---|---|
-| $O$ | Output gate |
-| $L$ | Loss gate |
-| $R$ | Remember gate |
-| $\kappa$ | Constant gate |
-| $\sigma$ | Sigmoid-based time-variable gate |
-| $\mathrm{con}$ | PET-constrained loss gate |
-| $B_{Lx}$ | Piecewise-linear precipitation bias-correction gate with dimension $x$ |
-| $B_{Qx}$ | Piecewise-quadratic precipitation bias-correction gate with dimension $x$ |
-| $A_x$ | Single hidden ANN layer with $x$ nodes |
-| $+$ | Multi-information (MI): the gate uses additional state information |
-| MR | Mass-relaxation mechanism |
+Use Python 3.10 and install the dependencies listed in `requirements.txt`, including NumPy, pandas, PyTorch, and scikit-learn. Run the following command from the repository root:
 
----
-
-## 2. Base single-node MCP models
-
-The basic family contains constant ($\kappa$) and sigmoid-variable ($\sigma$) output/loss gates. 
-
-For variable gates, the output gate depends on the current storage state and the loss gate depends on current PET.
-
-| Model | Notation | Description | MCP_Zoo class |
-|---|---|---|---|
-| M1 | $\mathrm{MC}\lbrace O_{\kappa}L_{\kappa}\rbrace$ | Constant output + constant loss | `MCPBRNN_constant_OutLoss` |
-| M2 | $\mathrm{MC}\lbrace O_{\kappa}L_{\sigma}\rbrace$ | Constant output + PET-variable loss | `MCPBRNN_Generic_constant_Out_variableLoss` |
-| M3 | $\mathrm{MC}\lbrace O_{\sigma}L_{\kappa}\rbrace$ | Storage-variable output + constant loss | `MCPBRNN_Generic_variable_Out_constantLoss` |
-| M4 | $\mathrm{MC}\lbrace O_{\sigma}L_{\sigma}\rbrace$ | Storage-variable output + PET-variable loss | `MCPBRNN_Generic_Scaling` |
-| M5 | $\mathrm{MC}\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}\rbrace$ | M4 + PET-constrained loss | `MCPBRNN_Generic_PETconstraint_Scaling` |
-
-Historical checkpoint references:
-
-| Model | Historical checkpoint |
-|---|---|
-| M1 | `model_epoch42.pt` |
-| M2 | `model_epoch468.pt` |
-| M3 | `model_epoch4963.pt` |
-| M4 | `model_epoch48.pt` |
-| M5 | `model_epoch27.pt` |
-
----
-
-## 3. Precipitation bias-correction models
-
-These models extend M5 with a precipitation-dependent bias-correction function.
-
-For both model families below, **M1–M5 indicate the dimensionality of the bias-correction function**, with dimensions ranging from 1 to 5. They do **not** refer to the five base MCP models described in Section 2.
-
-### 3.1 Piecewise-linear correction: `M-IBCorrPL`
-
-The model family is denoted as
-
-$MC\lbrace O_{\sigma}L_{\sigma}^{con}B_{Lx}\rbrace,\quad x=1,\ldots,5$
-
-where $B_{Lx}$ represents a piecewise-linear precipitation bias-correction function with dimension $x$.
-
-Accordingly:
-
-- `M1-IBCorrPL` corresponds to $B_{L1}$
-- `M2-IBCorrPL` corresponds to $B_{L2}$
-- `M3-IBCorrPL` corresponds to $B_{L3}$
-- `M4-IBCorrPL` corresponds to $B_{L4}$
-- `M5-IBCorrPL` corresponds to $B_{L5}$
-
-### 3.2 Piecewise-quadratic correction: `M-IBCorrPQ`
-
-The model family is denoted as
-
-$MC\lbrace O_{\sigma}L_{\sigma}^{con}B_{Qx}\rbrace,\quad x=1,\ldots,5$
-
-where $B_{Qx}$ represents a piecewise-quadratic precipitation bias-correction function with dimension $x$.
-
-Accordingly:
-
-- `M1-IBCorrPQ` corresponds to $B_{Q1}$
-- `M2-IBCorrPQ` corresponds to $B_{Q2}$
-- `M3-IBCorrPQ` corresponds to $B_{Q3}$
-- `M4-IBCorrPQ` corresponds to $B_{Q4}$
-- `M5-IBCorrPQ` corresponds to $B_{Q5}$
-
-Folders:
-
-```text
-M-IBCorrPL/
-├── M1-IBCorrPL/
-├── M2-IBCorrPL/
-├── M3-IBCorrPL/
-├── M4-IBCorrPL/
-└── M5-IBCorrPL/
-
-M-IBCorrPQ/
-├── M1-IBCorrPQ/
-├── M2-IBCorrPQ/
-├── M3-IBCorrPQ/
-├── M4-IBCorrPQ/
-└── M5-IBCorrPQ/
+```bash
+python -m pip install -r requirements.txt
 ```
 
----
+### Leaf River Data
 
-## 4. Mass-relaxation models
+The example data are provided in `20220527-MDUPLEX-LeafRiver/`, the default data directory used by the training and evaluation scripts.
 
-These models extend M5 by incorporating a mass-relaxation (MR) mechanism.
+- `LeafRiverDaily_43YR.txt`: daily precipitation (`P`), potential evapotranspiration (`PET`), and streamflow (`Q`), in that column order and all in mm/day.
+- `LeafRiverDaily_43YR_Flag.txt`: flags identifying the data subsets used for model spin-up, training, selection, and testing.
 
-The four MR variants are:
-
-| Model | Notation | Description |
-|---|---|---|
-| MR-1 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{\sigma}^{R}\rbrace$ | Regular |
-| MR-2 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{I}^{R}\rbrace$ | Independent |
-| MR-3 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{\sigma r}^{R}\rbrace$ | Regular-Relaxed |
-| MR-4 | $MC\lbrace O_{\sigma}L_{\sigma}^{\mathrm{con}}M_{Ir}^{R}\rbrace$ | Independent-Relaxed |
-
-Folders:
-
-```text
-MR-1/
-MR-2/
-MR-3/
-MR-4/
-```
-
----
-
-## 5. Complex gate models: `M-ComplexGate`
-
-$A_x$ denotes a one-hidden-layer ANN with $x=1,\ldots,5$ hidden nodes.
-
-### 5.1 LossGateOnly
-
-The model family is denoted as
-
-$MC\lbrace O_{\sigma}L_{A_x}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
-
-Folder structure:
-
-```text
-M-ComplexGate/
-└── LossGateOnly/
-    ├── loss-dim-1/
-    ├── loss-dim-2/
-    ├── loss-dim-3/
-    ├── loss-dim-4/
-    └── loss-dim-5/
-```
-
-Class:
-
-```python
-MCPBRNN_Generic_LossANNGate_PETconstraint
-```
-
-The output gate is storage-dependent sigmoid. The loss gate is a PET-driven ANN.
-
-### 5.2 OutputGateOnly
-
-The model family is denoted as
-
-$MC\lbrace O_{A_x}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
-
-Folder structure:
-
-```text
-M-ComplexGate/
-└── OutputGateOnly/
-    ├── output-dim-1/
-    ├── output-dim-2/
-    ├── output-dim-3/
-    ├── output-dim-4/
-    └── output-dim-5/
-```
-
-Class:
-
-```python
-MCPBRNN_Generic_OutputANNGate_PETconstraint
-```
-
-The output gate is a storage-driven ANN. The loss gate remains PET-dependent sigmoid.
-
-### 5.3 BothLossOutputGate
-
-The model family is denoted as
-
-$MC\lbrace O_{A_x}L_{A_y}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
-
-There are 25 combinations:
-
-```text
-loss-dim-1-out-dim-1
-...
-loss-dim-5-out-dim-5
-```
-
-Here, $x$ and $y$ denote the dimensions of the output-gate and loss-gate ANN functions, respectively.
-
-Class:
-
-```python
-MCPBRNN_Generic_ANNGate_PETconstraint_Generic
-```
-
-The output and loss gates each use a one-hidden-layer ANN.
-
----
-
-## 6. Multi-information complex gate models: `M-MI-ComplexGate`
-
-MI means that a gate uses additional information beyond its standard current-time input.
-
-For the current implementation:
-
-- the **output gate** can use current storage plus lagged storage ($t-1$);
-- the **loss gate** can additionally use current storage information;
-- the superscript $^{+}$ denotes the MI extension.
-
-### 6.1 LossGateOnly
-
-The model family is denoted as
-
-$MC\lbrace O_{\sigma}L_{A_x^{+}}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
-
-Class:
-
-```python
-MCPBRNN_Generic_PETconstraint_MIloss
-```
-
-### 6.2 OutputGateOnly
-
-The model family is denoted as
-
-$MC\lbrace O_{A_x^{+}}L_{\sigma}^{\mathrm{con}}\rbrace,\quad x=1,\ldots,5$
-
-Class:
-
-```python
-MCPBRNN_Generic_PETconstraint_MIoutput
-```
-
-### 6.3 BothLossOutputGate
-
-The model family is denoted as
-
-$MC\lbrace O_{A_x^{+}}L_{A_y^{+}}^{\mathrm{con}}\rbrace,\quad x,y=1,\ldots,5$
-
-There are 25 combinations.
-
-Here, $x$ and $y$ denote the dimensions of the output-gate and loss-gate ANN functions, respectively.
-
-Class:
-
-```python
-MCPBRNN_Generic_PETconstraint_MIoutputloss
-```
-
-### 6.4 MI-Only sigmoid models
-
-These cases use direct sigmoid gates instead of ANN layers.
-
-| Folder | Notation | Class |
-|---|---|---|
-| `loss-gate-only/` | $MC\lbrace O_{\sigma}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIloss_Sigmoid` |
-| `output-gate-only/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutput_Sigmoid` |
-| `loss-output-gate/` | $MC\lbrace O_{\sigma^{+}}L_{\sigma^{+}}^{\mathrm{con}}\rbrace$ | `MCPBRNN_Generic_PETconstraint_MIoutputloss_Sigmoid` |
-
----
-
-## 7. Recommended repository structure
-
-```text
-project/
-├── 20220527-MDUPLEX-LeafRiver/
-├── MCPBRNN_lib_tools/
-│   ├── MCP_Zoo.py
-│   ├── Eval_Metric.py
-│   └── Loss_Function.py
-│
-├── M1/
-├── M2/
-├── M3/
-├── M4/
-├── M5/
-│
-├── M-IBCorrPL/
-│   ├── M1-IBCorrPL/
-│   └── ...
-│
-├── M-IBCorrPQ/
-│   ├── M1-IBCorrPQ/
-│   └── ...
-│
-├── M-MassRelaxation/
-│   ├── MR1/
-│   ├── MR2/
-│   ├── MR3/
-│   └── MR4/
-│
-├── M-ComplexGate/
-│   ├── LossGateOnly/
-│   ├── OutputGateOnly/
-│   └── BothLossOutputGate/
-│
-└── M-MI-ComplexGate/
-    ├── LossGateOnly/
-    ├── OutputGateOnly/
-    ├── BothLossOutputGate/
-    └── MI-Only/
-        ├── loss-gate-only/
-        ├── output-gate-only/
-        └── loss-output-gate/
-```
-
-### Leaf River data: `20220527-MDUPLEX-LeafRiver`
-
-The [`20220527-MDUPLEX-LeafRiver`](https://github.com/YuanHWang/MCP-SingleNode-ModelZoo/tree/main/20220527-MDUPLEX-LeafRiver) folder contains the daily hydrometeorological data for the **Leaf River catchment in Mississippi, USA**.
-
-The current training and evaluation scripts use two files:
-
-- `LeafRiverDaily_43YR.txt` — 43-year daily data containing three columns: precipitation ($P$), potential evapotranspiration ($PET$), and streamflow ($Q$).
-- `LeafRiverDaily_43YR_Flag.txt` — data-partition flags used to identify spinup, training, selection, and testing periods.
-
-The partition flags are:
-
-| Flag | Period |
-|---:|---|
-| `-99999` | Spinup |
+| Flag | Data subset |
+| ---: | :--- |
+| `-99999` | Spin-up |
 | `-1` | Training |
 | `0` | Selection |
 | `1` | Testing |
 
-Other files in this directory are retained from earlier experiments and alternative data-partition schemes, but are not used by the current cleaned Model Zoo scripts.
+The data sequence includes three repetitions of water year 1949 for spin-up, followed by the 40-year simulation period covering water years 1949–1988.
+
+### Pretrained Checkpoints
+
+Pretrained Leaf River checkpoints are included in the model folders. They can be used for direct evaluation or as starting points for continued training and fine-tuning.
+
+---
 
 
-All model classes should be consolidated in:
+## Basic Computational Unit Update
+
+The representative single-node MCP formulation introduced in Wang & Gupta (2024) used the **7-parameter** computational unit
+
+$$
+MC\{O_{\sigma}L_{\sigma}^{\mathrm{con}}\}.
+$$
+
+In the present study, we use the corresponding **8-parameter** formulation,
+
+$$
+MC\{O_{\sigma}L_{\sigma+}^{\mathrm{con}}\},
+$$
+
+referred to in Wang & Gupta (2025) as
+
+$$
+MN^{DS}_{none}.
+$$
+
+The key difference is in the loss gate. In the 7-parameter formulation, the loss gate is driven by potential evapotranspiration (PET), whereas the 8-parameter formulation additionally allows the loss gate to depend on the **current MCP cell state**. Thus, the loss flux at a given time step can respond jointly to the atmospheric demand represented by current PET and to the amount of water currently stored in the MCP state.
+
+The corresponding single-node implementation and pretrained Leaf River result are provided in:
 
 ```text
-MCPBRNN_lib_tools/MCP_Zoo.py
+Miscellaneous/SingleNode-MN
 ```
 
 ---
 
-## 8. Running the models
+## Single-Layer MCP Networks
 
-All model scripts can be executed from the repository root.
+The single-layer experiments investigate a family of parallel MCP networks in which the number of MCP nodes, the treatment of network-level mass conservation, and the degree of internal state information sharing can be systematically varied.
 
-The scripts use `argparse` for optional runtime settings. Fixed-structure models can be run directly, whereas model families with multiple functional dimensions require the corresponding dimension argument to select the intended model case.
+Figure 2 summarizes the five network-level architectural hypotheses considered in Wang & Gupta (2025).
 
-The included checkpoint is used by default unless `--checkpoint` is explicitly provided.
+![Single-layer MCP network architectures](Figure2.png)
 
-### 8.1 Base single-node MCP models
+*Figure 2. Single-layer MCP network architectures considered in this study. The Distributed-Input (DI) and Distributed-State (DS) formulations conserve mass at the overall network level, whereas DIR, DSR, and MLB progressively relax the network-level mass-conservation constraints.*
 
-The five base models have fixed structures and can be run directly.
+### Network Types
 
-#### M1
+Five network types are implemented:
 
-Training:
+| Network type | Paper notation | Input distribution | Output aggregation |
+| --- | --- | --- | --- |
+| Distributed-Input | MN<sup>DI</sup>(N<sub>1</sub>) | Positive weights constrained to sum to 1 | Sum of all nodal outputs |
+| Distributed-State | MN<sup>DS</sup>(N<sub>1</sub>) | Unity input to every node | Positive weights constrained to sum to 1 |
+| Distributed-Input-Relaxed | MN<sup>DIR</sup>(N<sub>1</sub>) | Positive weights not constrained to sum to 1 | Sum of all nodal outputs |
+| Distributed-State-Relaxed | MN<sup>DSR</sup>(N<sub>1</sub>) | Unity input to every node | Positive weights not constrained to sum to 1 |
+| Machine-Learning Benchmark | MN<sup>MLB</sup>(N<sub>1</sub>) | Unconstrained linear mapping with bias | Unconstrained linear mapping with bias |
 
-```bash
-python M1/mcpbrnn_Main_constantO_constantL_clean.py
-```
+In the **Distributed-Input (DI)** formulation, precipitation is partitioned among the parallel MCP nodes using positive weights that sum to one, while the resulting nodal streamflow components are summed to obtain total streamflow.
 
-Evaluation:
+In contrast, the **Distributed-State (DS)** formulation sends the full precipitation input to every node and combines the resulting streamflow components using positive output weights that sum to one.
 
-```bash
-python M1/mcpbrnn_Main_constantO_constantL_EVAL_clean.py
-```
+The **DIR** and **DSR** formulations relax the corresponding input- and output-side network-level mass-conservation constraints, respectively. The **MLB** architecture provides the least constrained network-level benchmark by using unconstrained linear mappings with bias terms at both the input and output sides.
 
-#### M2
+### Number of Nodes
 
-Training:
+The single-layer networks are denoted as:
 
-```bash
-python M2/mcpbrnn_Main_constantO_variableL_clean.py
-```
+$$
+MN^{\mathrm{Type}}_{\mathrm{Sharing}}(N_1)
+$$
 
-Evaluation:
+where $N_1$ denotes the number of MCP nodes in the first hidden layer. Because the architectures considered in this section contain only one hidden layer, $N_1$ is also the total number of parallel MCP nodes in the network.
 
-```bash
-python M2/mcpbrnn_Main_constantO_variantL_EVAL_clean.py
-```
+In the experiments reported in Wang & Gupta (2025), we evaluated:
 
-#### M3
+$$
+N_1 = 2,\ 3,\ 4,\ 5
+$$
 
-Training:
+For example,
 
-```bash
-python M3/mcpbrnn_Main_variableO_constantL_clean.py
-```
+$$
+MN^{DS}_{None}(3)
+$$
 
-Evaluation:
+denotes a single-layer **Distributed-State** network with **three MCP nodes** and **no internal state information sharing**.
 
-```bash
-python M3/mcpbrnn_Main_variantO_constantL_EVAL_clean.py
-```
+### Internal State Information Sharing
 
-#### M4
+For each of the five network types, four information-sharing configurations are considered following the notation used in Table 1 of Wang & Gupta (2025):
 
-Training:
+| Sharing option | Paper notation | Information available to each node |
+| --- | --- | --- |
+| None | `None` | No state sharing |
+| Sharing-Augmented Output | `SAO` | States shared with the output gate only |
+| Sharing-Augmented Loss | `SAL` | States shared with the loss gate only |
+| Sharing-Augmented Loss and Output | `SALO` | States shared with both output and loss gates |
 
-```bash
-python M4/mcpbrnn_Main_M4_Scaling_clean.py
-```
+Combining the five network types with the four information-sharing configurations gives **20 single-layer architectural variants** for each value of $N_1$.
 
-Evaluation:
+Examples include:
 
-```bash
-python M4/mcpbrnn_Main_M4_Scaling_EVAL_clean.py
-```
+- $MN^{DS}_{None}(N_1)$: Distributed-State with no information sharing
+- $MN^{DS}_{SAO}(N_1)$: Distributed-State with state information shared at the output gates
+- $MN^{DS}_{SAL}(N_1)$: Distributed-State with state information shared at the loss gates
+- $MN^{DS}_{SALO}(N_1)$: Distributed-State with state information shared at both the output and loss gates
 
-#### M5
+The same `None`, `SAO`, `SAL`, and `SALO` convention is used for the DI, DIR, DSR, and MLB network families.
 
-Training:
+### Single-Layer Model Space
 
-```bash
-python M5/mcpbrnn_Main_PETconstraint_clean.py
-```
+The complete single-layer model space consists of:
 
-Evaluation:
+- 5 network types: `DI`, `DS`, `DIR`, `DSR`, and `MLB`
+- 4 information-sharing options: `None`, `SAO`, `SAL`, and `SALO`
+- 4 network sizes: $N_1 = 2, 3, 4, 5$
 
-```bash
-python M5/evaluate_Main_PETconstraint_clean.py
-```
+This gives:
 
-### 8.2 Precipitation bias-correction models
+$$
+5 \times 4 \times 4 = 80
+$$
 
-The precipitation bias-correction families share one training script and one evaluation script across dimensions 1–5.
+single-layer model configurations.
 
-The desired bias-correction dimension is specified using:
+### Running a Single-Layer Case
 
-```text
---dim x
-```
+Each model variant is provided with a training script and a corresponding evaluation script. The filenames identify both the network type and the information-sharing configuration.
 
-where `x = 1,...,5`.
-
-#### Piecewise-linear correction: `M-IBCorrPL`
-
-For example, to run dimension 3:
+For example, to continue training the **Machine-Learning Benchmark (MLB)** network without internal state sharing:
 
 ```bash
-python M-IBCorrPL/mcpbrnn_Main_PETconstraint_IBcorrPL_clean.py --dim 3
+python train_MLB_None_single_layer.py
 ```
 
-Evaluation:
+To evaluate the corresponding pretrained model:
 
 ```bash
-python M-IBCorrPL/mcpbrnn_Main_PETconstraint_IBcorrPL_EVAL_clean.py --dim 3
+python evaluate_MLB_None_single_layer.py
 ```
 
-The script automatically associates `--dim 3` with:
+Similarly, `DS_SALO` refers to a Distributed-State network with information shared at both the output and loss gates, whereas `DIR_SAO` refers to a Distributed-Input-Relaxed network with state information shared only at the output gates.
 
-```text
-M-IBCorrPL/M3-IBCorrPL/
-```
+The number of MCP nodes, $N_1$, is specified through the model configuration used by the corresponding script.
 
-#### Piecewise-quadratic correction: `M-IBCorrPQ`
+The evaluation scripts report model skill for the spin-up, training, selection, and testing periods, together with the corresponding MCP state, flux, and gate diagnostics.
 
-For example, to run dimension 3:
+---
 
-```bash
-python M-IBCorrPQ/mcpbrnn_Main_PETconstraint_IBcorrPQ_clean.py --dim 3
-```
+## Multi-Layer MCP Networks
 
-Evaluation:
+The multi-layer experiments extend the MCP network architecture by arranging nodes into two or three successive hidden layers. Based on the results of the single-layer experiments, the multi-layer investigation focuses on the Distributed-State (DS) formulation.
 
-```bash
-python M-IBCorrPQ/mcpbrnn_Main_PETconstraint_IBcorrPQ_EVAL_clean.py --dim 3
-```
+Figure 3 provides a conceptual summary of the multi-layer MCP architectures considered in this study, including the MassConserved, MassRelaxed, and Machine-Learning Benchmark (MLB) formulations.
 
-The script automatically associates `--dim 3` with:
+![Multi-layer MCP network architectures](Figure3.png)
 
-```text
-M-IBCorrPQ/M3-IBCorrPQ/
-```
+*Figure 3. Conceptual illustration of the multi-layer MCP architectures considered in this study. The three model families differ in how inter-layer and output mappings are constrained: MassConserved uses mass-conserving mappings, MassRelaxed uses positive but mass-relaxed mappings, and MLB uses unconstrained affine mappings.*
 
-### 8.3 Mass-relaxation models
+Three forms of inter-layer and output transformation are investigated, together with corresponding information-sharing variants. The repository therefore contains six multi-layer model families.
 
-The four mass-relaxation cases have fixed structures and can be run directly.
+### Multi-Layer Model Families
 
-#### MR-1
+The six multi-layer model families are organized as follows:
 
-```bash
-python MR-1/mcpbrnn_Main_MR1_Regular_clean.py
-python MR-1/mcpbrnn_Main_MR1_Regular_EVAL_clean.py
-```
+| No. | Repository folder | Network family | Mapping | Information sharing |
+| ---: | --- | --- | --- | --- |
+| 1 | `MassConserved` | Distributed-State | Mass-conserving | None |
+| 2 | `MassConserved-InfoShared` | Distributed-State | Mass-conserving | Output + loss gates |
+| 3 | `MassRelaxed` | Distributed-State-Relaxed | Positive, mass-relaxed | None |
+| 4 | `MassRelaxed-InfoShared` | Distributed-State-Relaxed | Positive, mass-relaxed | Output + loss gates |
+| 5 | `ML` | Distributed-State Machine-Learning Benchmark | Unconstrained affine | None |
+| 6 | `ML-InfoShared` | Distributed-State Machine-Learning Benchmark | Unconstrained affine | Output + loss gates |
 
-#### MR-2
+The **1st, 3rd, and 5th model families** are the non-information-sharing multi-layer networks summarized in **Figure 5** of Wang & Gupta (2025):
 
-```bash
-python MR-2/mcpbrnn_Main_MR2_Independent_clean.py
-python MR-2/mcpbrnn_Main_MR2_Independent_EVAL_clean.py
-```
+$$
+MN^{DS}_{None}(N_1,N_2,N_3)
+$$
 
-#### MR-3
+$$
+MN^{DSR}_{None}(N_1,N_2,N_3)
+$$
 
-```bash
-python MR-3/mcpbrnn_Main_MR3_Regular_Relaxed_clean.py
-python MR-3/mcpbrnn_Main_MR3_Regular_Relaxed_EVAL_clean.py
-```
+$$
+MN^{DS-MLB}_{None}(N_1,N_2,N_3)
+$$
 
-#### MR-4
+The **2nd, 4th, and 6th model families** are their corresponding **Sharing-Augmented Loss and Output (SALO)** variants summarized in **Figure 9**:
 
-```bash
-python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_clean.py
-python MR-4/mcpbrnn_Main_MR4_Independent_Relaxed_EVAL_clean.py
-```
+$$
+MN^{DS}_{SALO}(N_1,N_2,N_3)
+$$
 
-### 8.4 High-dimensional complex gate models: `M-ComplexGate`
+$$
+MN^{DSR}_{SALO}(N_1,N_2,N_3)
+$$
 
-#### LossGateOnly
+$$
+MN^{DS-MLB}_{SALO}(N_1,N_2,N_3)
+$$
 
-Specify the loss-gate ANN dimension using `--dim`.
+The correspondence between the repository folders and the formal paper notation is therefore:
+
+1. **`MassConserved`**  
+   $MN^{DS}_{None}(N_1,N_2,N_3)$
+
+2. **`MassConserved-InfoShared`**  
+   $MN^{DS}_{SALO}(N_1,N_2,N_3)$
+
+3. **`MassRelaxed`**  
+   $MN^{DSR}_{None}(N_1,N_2,N_3)$
+
+4. **`MassRelaxed-InfoShared`**  
+   $MN^{DSR}_{SALO}(N_1,N_2,N_3)$
+
+5. **`ML`**  
+   $MN^{DS-MLB}_{None}(N_1,N_2,N_3)$
+
+6. **`ML-InfoShared`**  
+   $MN^{DS-MLB}_{SALO}(N_1,N_2,N_3)$
+
+For the multi-layer experiments, information sharing is applied to both the output and loss gates. Importantly, information sharing is **layer-wise**: each node can access the cell states of other nodes within the **same layer**, but information is not directly shared across different hidden layers.
+
+### Multi-Layer Architecture Notation
+
+A multi-layer architecture is denoted as:
+
+$$
+MN^{\mathrm{Type}}_{\mathrm{Sharing}}(N_1,N_2,N_3)
+$$
+
+where:
+
+- $N_1$ is the number of MCP nodes in the first hidden layer,
+- $N_2$ is the number of MCP nodes in the second hidden layer,
+- $N_3$ is the number of MCP nodes in the third hidden layer.
+
+The corresponding repository folder uses the compact notation `Lxyz`, where `x`, `y`, and `z` represent $N_1$, $N_2$, and $N_3$, respectively.
 
 For example:
 
-```bash
-python M-ComplexGate/LossGateOnly/mcpbrnn_Main_lossANNGate_clean.py --dim 3
-python M-ComplexGate/LossGateOnly/mcpbrnn_Main_PETconstraint_lossANNGate_EVAL_clean.py --dim 3
-```
+| Folder | Architecture | Interpretation |
+| --- | --- | --- |
+| `L110` | `(1, 1, 0)` | Two layers with one MCP node in each layer |
+| `L230` | `(2, 3, 0)` | Two layers with 2 nodes in Layer 1 and 3 nodes in Layer 2 |
+| `L111` | `(1, 1, 1)` | Three layers with one MCP node in each layer |
+| `L231` | `(2, 3, 1)` | Three layers with 2, 3, and 1 nodes |
+| `L333` | `(3, 3, 3)` | Three layers with 3 nodes in every layer |
 
-This selects:
+A value of `0` for $N_3$ indicates that the third hidden layer is absent.
 
-```text
-M-ComplexGate/LossGateOnly/loss-dim-3/
-```
+The single-layer architectures are stored separately under `MN-Single-Layer/`.
 
-#### OutputGateOnly
+### Number of Multi-Layer Cases
 
-Specify the output-gate ANN dimension using `--dim`.
-
-For example:
-
-```bash
-python M-ComplexGate/OutputGateOnly/mcpbrnn_Main_outputANNGate_clean.py --dim 3
-python M-ComplexGate/OutputGateOnly/mcpbrnn_Main_PETconstraint_outputANNGate_EVAL_clean.py --dim 3
-```
-
-This selects:
+For the two-layer networks:
 
 ```text
-M-ComplexGate/OutputGateOnly/out-dim-3/
+N1 = 1, 2, 3
+N2 = 1, 2, 3
+N3 = 0
 ```
 
-#### BothLossOutputGate
+giving:
 
-The loss- and output-gate ANN dimensions are specified independently using:
+$$
+3 \times 3 = 9
+$$
+
+two-layer architectures.
+
+For the three-layer networks:
 
 ```text
---loss_dim y --out_dim x
+N1 = 1, 2, 3
+N2 = 1, 2, 3
+N3 = 1, 2, 3
 ```
 
-For example, for a loss-gate dimension of 3 and an output-gate dimension of 5:
+giving:
 
-```bash
-python M-ComplexGate/BothLossOutputGate/mcpbrnn_Main_ANNGate_clean.py --loss_dim 3 --out_dim 5
-```
+$$
+3 \times 3 \times 3 = 27
+$$
 
-Evaluation:
+three-layer architectures.
 
-```bash
-python M-ComplexGate/BothLossOutputGate/mcpbrnn_Main_ANNGate_PETconstraint_EVAL_clean.py --loss_dim 3 --out_dim 5
-```
+Therefore, each multi-layer model family contains:
 
-This selects:
+$$
+9 + 27 = 36
+$$
+
+architectures.
+
+With six model families, the complete multi-layer model zoo contains:
+
+$$
+6 \times 36 = 216
+$$
+
+model configurations.
+
+The 36 architecture folders contained in each family are:
 
 ```text
-M-ComplexGate/BothLossOutputGate/loss-dim-3-out-dim-5/
+L110  L111  L112  L113
+L120  L121  L122  L123
+L130  L131  L132  L133
+
+L210  L211  L212  L213
+L220  L221  L222  L223
+L230  L231  L232  L233
+
+L310  L311  L312  L313
+L320  L321  L322  L323
+L330  L331  L332  L333
 ```
 
-### 8.5 Multi-information complex gate models: `M-MI-ComplexGate`
+### Special Cases: L110 and L111
 
-#### LossGateOnly
+Because information sharing occurs only among nodes within the **same hidden layer**, sharing does not introduce any additional cross-node information when a layer contains only one node.
 
-Specify the loss-gate ANN dimension using `--dim`.
-
-```bash
-python M-MI-ComplexGate/LossGateOnly/mcpbrnn_Main_MI_Loss_PETconstraint_clean.py --dim 3
-python M-MI-ComplexGate/LossGateOnly/mcpbrnn_Main_MI_Loss_PETconstraint_EVAL_clean.py --dim 3
-```
-
-#### OutputGateOnly
-
-Specify the output-gate ANN dimension using `--dim`.
-
-```bash
-python M-MI-ComplexGate/OutputGateOnly/mcpbrnn_Main_MI_Output_PETconstraint_clean.py --dim 3
-python M-MI-ComplexGate/OutputGateOnly/mcpbrnn_Main_MI_Output_PETconstraint_EVAL_clean.py --dim 3
-```
-
-#### BothLossOutputGate
-
-Specify both ANN dimensions using `--loss_dim` and `--out_dim`.
-
-For example:
-
-```bash
-python M-MI-ComplexGate/BothLossOutputGate/mcpbrnn_Main_MI_LossOutput_PETconstraint_clean.py --loss_dim 3 --out_dim 5
-```
-
-Evaluation:
-
-```bash
-python M-MI-ComplexGate/BothLossOutputGate/mcpbrnn_Main_MI_LossOutput_PETconstraint_EVAL_clean.py --loss_dim 3 --out_dim 5
-```
-
-### 8.6 MI-only sigmoid models
-
-The MI-only sigmoid models have fixed structures and can be run directly.
-
-#### Loss gate only
-
-```bash
-python M-MI-ComplexGate/MI-Only/loss-gate-only/mcpbrnn_Main_MI_Loss_PETconstraint_Sigmoid_clean.py
-python M-MI-ComplexGate/MI-Only/loss-gate-only/mcpbrnn_Main_MI_Loss_PETconstraint_Sigmoid_EVAL_clean.py
-```
-
-#### Output gate only
-
-```bash
-python M-MI-ComplexGate/MI-Only/output-gate-only/mcpbrnn_Main_MI_Output_PETconstraint_Sigmoid_clean.py
-python M-MI-ComplexGate/MI-Only/output-gate-only/mcpbrnn_Main_MI_Output_PETconstraint_Sigmoid_EVAL_clean.py
-```
-
-#### Loss and output gates
-
-```bash
-python M-MI-ComplexGate/MI-Only/loss-output-gate/mcpbrnn_Main_MI_LossOutput_PETconstraint_Sigmoid_clean.py
-python M-MI-ComplexGate/MI-Only/loss-output-gate/mcpbrnn_Main_MI_LossOutput_PETconstraint_Sigmoid_EVAL_clean.py
-```
-
-### 8.7 Common command-line arguments
-
-Training scripts support optional arguments such as:
+This makes the following two architectures special:
 
 ```text
---case_no
---epoch_no
---time_lag
---seed_no
---checkpoint
---data_dir
---output_dir
---device
+L110 = (1, 1, 0)
+L111 = (1, 1, 1)
 ```
 
-Dimension-dependent model families additionally use:
+Every active hidden layer in these architectures contains exactly one MCP node. Therefore, there are no additional nodes within a layer from which cell-state information can be shared.
+
+Consequently, for these two architectures, the information-sharing versions are equivalent to their corresponding non-information-sharing versions:
 
 ```text
---dim
+MassConserved-InfoShared/L110 = MassConserved/L110
+MassConserved-InfoShared/L111 = MassConserved/L111
+
+MassRelaxed-InfoShared/L110   = MassRelaxed/L110
+MassRelaxed-InfoShared/L111   = MassRelaxed/L111
+
+ML-InfoShared/L110            = ML/L110
+ML-InfoShared/L111            = ML/L111
 ```
 
-or:
+Information sharing begins to introduce additional cross-node dependencies only when at least one hidden layer contains two or more MCP nodes.
+
+### Directory Structure
+
+The multi-layer model zoo is organized as:
 
 ```text
---loss_dim
---out_dim
+MN-Multi-Layers/
+├── MassConserved/
+├── MassConserved-InfoShared/
+├── MassRelaxed/
+├── MassRelaxed-InfoShared/
+├── ML/
+└── ML-InfoShared/
 ```
 
-The available arguments and defaults for any script can be inspected using:
+Each of these six folders contains the same set of 36 `Lxyz` architecture folders.
+
+A typical case is organized as:
+
+```text
+MN-Multi-Layers/
+└── MassConserved/
+    └── L330/
+        ├── best_model_epochXXX.pt
+        ├── train_MassConserved_MultiLayer_L330.py
+        └── evaluate_MassConserved_MultiLayer_L330.py
+```
+
+### Running a Multi-Layer Case
+
+For example, `L330` represents:
+
+$$
+(N_1,N_2,N_3)=(3,3,0)
+$$
+
+which is a two-layer network containing three MCP nodes in the first layer and three MCP nodes in the second layer.
+
+To evaluate the pretrained `MassConserved/L330` model:
 
 ```bash
-python <script>.py --help
-```
----
-
-## 9. Checkpoint convention
-
-For cleaned scripts, the preferred convention is:
-
-```text
-<model-folder>/
-├── <one checkpoint>.pt
-├── training script
-└── EVAL script
+cd MN-Multi-Layers/MassConserved/L330
+python evaluate_MassConserved_MultiLayer_L330.py
 ```
 
-If `--checkpoint` is not supplied, the script searches the relevant model folder for exactly one `.pt` file.
+To continue training from the checkpoint stored in the same folder:
 
-Training workflow:
-
-```text
-existing checkpoint
-    ↓
-strict load
-    ↓
-continue training
-    ↓
-evaluate every epoch
-    ↓
-select best epoch by selection KGE
-    ↓
-best_model_epochX.pt
+```bash
+python train_MassConserved_MultiLayer_L330.py
 ```
 
-EVAL workflow:
+By default, the scripts use the pretrained checkpoint stored in the corresponding `Lxyz` directory.
 
-```text
-checkpoint
-    ↓
-strict load
-    ↓
-forward-only evaluation
-    ↓
-metrics + diagnostic time series
-```
+The evaluation scripts report model skill for the spin-up, training, selection, and testing periods and save the associated layer-wise discharge, storage, loss, gate, and inter-layer mapping diagnostics.
 
 ---
 
-## 10. Common training settings
+## Physical-Conceptual MA3–MA6 Models with SALO State Sharing
 
-Unless a case explicitly differs:
+The `MA-Sharing/` directory contains information-sharing extensions of four physical-conceptual MCP architectures — **MA3, MA4, MA5, and MA6** — originally introduced and evaluated in our previous study, Wang & Gupta (2024), *Towards Interpretable Physical-Conceptual Catchment-Scale Hydrological Modeling Using the Mass-Conserving-Perceptron*.
 
-```python
-time_lag = 0
-learning_rate = 0.025
-learning_rates = {300: 0.0125, 600: 0.0125}
-```
+In that earlier work, MA3–MA6 were developed as progressively more complex architectural hypotheses for representing catchment-scale rainfall-runoff dynamics using physically interpretable and mass-conserving MCP units. The architectures differ in how cell states and runoff pathways are organized, ranging from serial soil-moisture/routing representations to structures containing parallel surface, groundwater, channel-routing, and overland-flow pathways.
 
-Data split flags:
+Building on the cell-state information-sharing framework explored in Wang & Gupta (2025), the implementations provided here augment these original physical-conceptual architectures by allowing gating functions to use information from other internal cell states.
 
-| Flag | Split |
-|---:|---|
-| `-99999` | spinup |
-| `-1` | training |
-| `0` | selection |
-| `1` | testing |
+### Base MA3–MA6 Architectures
 
-Reported metrics:
+The four architectures differ primarily in the number of cell states and the organization of the associated runoff pathways:
 
-```text
-NSE
-KGE
-KGE-A
-KGE-B
-Corr
-MSE / mse
-KGEss
-```
+| Model | Main architectural hypothesis |
+| --- | --- |
+| `MA3` | One flow pathway with two cell states in series: a catchment soil-moisture storage followed by a routing storage |
+| `MA4` | Two parallel flow pathways representing near-surface runoff and groundwater/baseflow |
+| `MA5` | Three cell states and two flow pathways, extending MA4 by including explicit surface/channel routing |
+| `MA6` | Extends MA5 by including an additional overland-flow pathway that can route water directly toward the catchment outlet |
 
-Training diagnostics also include KGE at lags 1, 2, and 3.
+All four architectures retain the physically interpretable storage and flow-path structures developed in Wang & Gupta (2024).
 
----
+### SALO State Sharing
 
-## 11. Time-series output convention
+The versions included in this repository augment the original MA3–MA6 architectures with **Sharing-Augmented Loss and Output (SALO)** gates.
 
-Cleaned output files use:
+In the original physical-conceptual formulations, the gating behavior associated with a given MCP state is primarily determined using information local to that state.
+
+In the SALO extensions, both the **output gate** and the **loss gate** are additionally allowed to use information from other cell states in the model.
+
+Conceptually:
 
 ```text
-time, <result variable>, phase
+Original MA model:
+
+state i
+  ├── output gate <- local state information
+  └── loss gate   <- local state information
+
+
+MA-SALO model:
+
+state i
+  ├── output gate <- local state + information from other cell states
+  └── loss gate   <- local state + information from other cell states
 ```
 
-with phases:
+The underlying MA3–MA6 storage and flow-path architectures are retained. The modification concerns the information available to the gating functions rather than the introduction of new hydrologic states or new flow pathways.
+
+This provides a direct way to investigate whether fluxes associated with an individual conceptual storage should depend only on its local state or on a broader representation of the moisture distribution across the model.
+
+### Available MA-SALO Cases
+
+Four SALO physical-conceptual cases are included:
+
+| Repository folder | Base architecture | Information sharing |
+| --- | --- | --- |
+| `MA3-SALO` | MA3 | Output + loss gates |
+| `MA4-SALO` | MA4 | Output + loss gates |
+| `MA5-SALO` | MA5 | Output + loss gates |
+| `MA6-SALO` | MA6 | Output + loss gates |
+
+The directory is organized as:
 
 ```text
-spinup1
-spinup2
-spinup3
-simulation
+MA-Sharing/
+├── MA3-SALO/
+├── MA4-SALO/
+├── MA5-SALO/
+└── MA6-SALO/
 ```
 
-The time axis contains:
+Each case contains a pretrained Leaf River checkpoint together with its corresponding training and evaluation scripts.
 
-- three repetitions of WY1949 (`1948-10-01` to `1949-09-30`) for spinup;
-- formal simulation from `1948-10-01` through `1988-09-30`;
-- total length: **15,705 rows**.
-
-Repeated calendar dates across spinup phases are intentional; `phase` distinguishes them.
-
----
-
-## 12. Implementation conventions
-
-Cleaned model classes follow these rules:
-
-- preserve historical checkpoint parameter names and tensor shapes;
-- preserve pre-update versus post-update hydrologic timing;
-- use **remember gate** terminology for `gR`;
-- use `x.new_zeros(...)` for device-safe output tensors;
-- keep the `seq_len = 1` assumption explicit;
-- remove unused imports, dead prototype code, and obsolete initialization logic;
-- keep equations compact and readable;
-- do not rename `state_dict` parameter keys;
-- Python class names may be renamed only when necessary to avoid duplicate class names in `MCP_Zoo.py`.
-
-For MR3 and MR4, only the Python class names were disambiguated; the checkpoint parameter keys remain unchanged.
-
----
-
-## 13. Environment and dependencies
-
-The repository was organized for the following Python environment.
-
-### `requirement.txt`
+For example, the MA6-SALO directory is organized as:
 
 ```text
-numpy==2.2.2
-pandas==2.2.3
-torch==2.9.0
-torchvision==0.24.0
-tqdm==4.67.1
-scikit-learn==1.6.1
+MA-Sharing/
+└── MA6-SALO/
+    ├── model_epoch8.pt
+    ├── train_MA6_SALO.py
+    └── evaluate_MA6_SALO.py
 ```
 
-Install with:
+The exact checkpoint filename may differ among the four cases because each architecture retains its corresponding pretrained model.
+
+### Running an MA-SALO Case
+
+For example, to evaluate the pretrained **MA6-SALO** model:
 
 ```bash
-pip install -r requirement.txt
+cd MA-Sharing/MA6-SALO
+python evaluate_MA6_SALO.py
 ```
 
-### `environment.yml`
-
-```yaml
-name: MCP-SingleNode-ModelZoo
-channels:
-  - defaults
-dependencies:
-  - python=3.10
-  - pip
-  - notebook
-  - pip:
-      - numpy==2.2.2
-      - pandas==2.2.3
-      - torch==2.9.0
-      - torchvision==0.24.0
-      - tqdm==4.67.1
-      - scikit-learn==1.6.1
-```
-
-Create and activate the Conda environment with:
+To continue training from the checkpoint stored in the same directory:
 
 ```bash
-conda env create -f environment.yml
-conda activate MCP-SingleNode-ModelZoo
+python train_MA6_SALO.py
 ```
+
+The same naming convention is used for the remaining architectures:
+
+```text
+MA3-SALO
+MA4-SALO
+MA5-SALO
+MA6-SALO
+```
+
+The evaluation scripts report model skill for the spin-up, training, selection, and testing periods and save the associated discharge, storage, routing, loss, and gate diagnostics.
 
 ---
 
-## 14. Conclusion
+# Pruning evaluator usage
 
-This repository provides a consolidated and reproducible collection of single-node MCP model variants, including cleaned training and evaluation scripts, checkpoints, and data conventions. 
+These scripts evaluate pretrained five-node DS networks without retraining or fine-tuning.
+
+The default pruning rule is to compute the learned DS output weights
+
+$$
+w_i = \frac{\exp(a_i)}{\sum_j \exp(a_j)}
+$$
+
+and prune progressively from the smallest learned output weight. The retained output weights are kept exactly at their pretrained values and are **not renormalized** after pruning.
+
+## Automatic smallest-weight pruning
+
+```bash
+python evaluate_Prune_Case1.py --prune_count 1
+python evaluate_Prune_Case2_FLOWPATH.py --prune_count 2
+python evaluate_Prune_Case2_FULL.py --prune_count 2
+```
+
+`--prune_count 1` removes the smallest learned flow-path weight; `--prune_count 2` removes the two smallest, and so on.
+
+## Manual pruning
+
+Readers can override the automatic ranking and select any paths directly using 1-based node IDs:
+
+```bash
+python evaluate_Prune_Case1.py --prune_nodes 2,4
+python evaluate_Prune_Case2_FLOWPATH.py --prune_nodes 2,4
+python evaluate_Prune_Case2_FULL.py --prune_nodes 2,4
+```
+
+## Interpretation
+
+- `Case1`: no state sharing; selected direct output flow paths are masked.
+- `Case2_FLOWPATH`: partial SALO pruning; selected direct output flow paths are masked, but the corresponding cell states remain active in the shared output/loss gates.
+- `Case2_FULL`: full SALO pruning; selected direct output flow paths are masked and the corresponding source-state interaction rows in `weight_b1_yom` and `weight_b1_ylm` are set to zero.
+
+The scripts print the learned output weights and their smallest-to-largest ranking at runtime, and save `metrics.csv`, `output_weights.csv`, `pruning_configuration.csv`, and time-series diagnostics.
+
+---
+
+## References & Citation
+
+Readers should consult the original papers for the formal model names, notation, mathematical definitions, and development of the MCP-based physical-conceptual and neural-network architectures used in this repository.
+
+### Primary Repository Reference
+
+- Full article: [Wang & Gupta (2025)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2025WR040178)
+- DOI: [10.1029/2025WR040178](https://doi.org/10.1029/2025WR040178)
+
+> Wang, Y.-H., & Gupta, H. V. (2025). Using machine learning to discover parsimonious and physically-interpretable representations of catchment-scale rainfall-runoff dynamics. *Water Resources Research, 61*(12), e2025WR040178. https://doi.org/10.1029/2025WR040178
+
+### Physical-Conceptual MA Architecture Reference
+
+- DOI: [10.1029/2024WR037224](https://doi.org/10.1029/2024WR037224)
+
+> Wang, Y.-H., & Gupta, H. V. (2024). Towards interpretable physical-conceptual catchment-scale hydrological modeling using the mass-conserving-perceptron. *Water Resources Research, 60*(10), e2024WR037224. https://doi.org/10.1029/2024WR037224
+
+---
+
+## Contact
+
+This repository provides a consolidated and reproducible collection of MCP neural network variants, including cleaned training and evaluation scripts, checkpoints, and data conventions.
 
 For questions or suggestions, please contact **Yuan-Heng Wang, Ph.D.** at `yhwang0730@gmail.com` or `yhwang0730@arizona.edu`.
+
+---
 
 ## License
 
